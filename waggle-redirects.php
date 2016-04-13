@@ -8,6 +8,14 @@
  * Version: 1.0
  */
 
+if( ! class_exists('acf') ) {
+	add_filter( 'acf/settings/path', 'waggle_acf_settings_path' );
+	add_filter( 'acf/settings/dir', 'waggle_acf_settings_dir' );
+	add_filter( 'acf/settings/show_admin', '__return_false' );
+	add_action( 'admin_menu', 'waggle_remove_acf_from_admin_menu', 100 );
+	include_once( plugin_dir_path( __FILE__ ) . '/acf/acf.php' );
+}
+
 function waggle_redirect_on_404() {
 	if ( is_404() ) {
 		$redirect_to = waggle_get_redirect_target();
@@ -205,3 +213,17 @@ function waggle_register_fields() {
 	));
 }
 add_action( 'acf/register_fields', 'waggle_register_fields' );
+
+function waggle_acf_settings_path( $path = '' ) {
+    $path = plugin_dir_path( __FILE__ ) . 'acf/';
+    return $path;
+}
+
+function waggle_acf_settings_dir( $path = '' ) {
+    $dir = plugin_dir_url( __FILE__ ) . 'acf/';
+    return $dir;
+}
+
+function waggle_remove_acf_from_admin_menu() {
+  remove_menu_page( 'edit.php?post_type=acf' ); 
+}
