@@ -16,6 +16,19 @@ if( ! class_exists('acf') ) {
 	include_once( plugin_dir_path( __FILE__ ) . '/acf/acf.php' );
 }
 
+function waggle_validate_external_url( $valid, $value, $field, $input ) {
+	if( !$valid ) {
+		return $valid;
+	}
+	
+	var_dump( $value );
+	die( 'validating' );
+
+	return $valid;	
+}
+
+add_filter( 'acf/validate_value', 'waggle_validate_external_url', 10, 4 );
+
 function waggle_redirect_on_404() {
 	if ( is_404() ) {
 		$redirect_to = waggle_get_redirect_target();
