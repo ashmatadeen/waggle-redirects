@@ -93,6 +93,11 @@ function waggle_register_redirect_cpt() {
 }
 add_action( 'init', 'waggle_register_redirect_cpt' );
 
+function waggle_get_post_types_for_internal_targets() {
+	$post_types = get_post_types( array( 'public' => true ) );
+	return $post_types;
+}
+
 
 function waggle_register_fields() {
 	if ( ! function_exists( 'register_field_group' ) ) {
@@ -174,9 +179,7 @@ function waggle_register_fields() {
 					),
 					'allorany' => 'all',
 				),
-				'post_type' => array (
-					0 => 'all',
-				),
+				'post_type' => waggle_get_post_types_for_internal_targets(),
 				'allow_null' => 0,
 				'multiple' => 0,
 			),
