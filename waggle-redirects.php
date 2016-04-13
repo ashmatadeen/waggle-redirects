@@ -225,7 +225,20 @@ function waggle_register_fields() {
 		'menu_order' => 0,
 	));
 }
-add_action( 'acf/register_fields', 'waggle_register_fields' );
+if ( waggle_get_acf_version() <= 4 ) {
+	add_action( 'acf/register_fields', 'waggle_register_fields' );	
+} elseif ( waggle_get_acf_version() >= 5 ) {
+	add_action( 'acf/include_fields', 'waggle_register_fields' );	
+}
+
+
+function waggle_get_acf_version() {
+	global $acf;
+	$settings = $acf->settings;
+	$version = $settings['version'];
+	$version_parts = explode( '.', $version );
+	return reset( $version_parts );
+}
 
 function waggle_acf_settings_path( $path = '' ) {
     $path = plugin_dir_path( __FILE__ ) . 'acf/';
