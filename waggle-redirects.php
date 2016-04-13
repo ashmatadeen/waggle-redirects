@@ -8,6 +8,53 @@
  * Version: 1.0
  */
 
+function waggle_redirect_on_404() {
+	if ( is_404() ) {
+		$redirect_to = waggle_get_redirect_target();
+		if ( $redirect_to ) {
+			wp_redirect( $redirect_to );
+			exit();
+		}
+	}
+}
+add_action( 'template_redirect', 'waggle_redirect_on_404' );
+
+function waggle_get_redirect_target() {
+	$path = waggle_get_the_path();
+
+	$args = array(
+				'post_type'			=>	'redirect',
+				'posts_per_page'	=>	1,
+				'meta_key'			=>	'source_path',
+				'meta_value'		=> 	$path,
+			);
+
+	$redirects = new WP_Query($args);
+	if ( $redirects && count( $redirects->posts ) >= 1 ) {
+		$the_target_id = $redirects->posts[0]->ID;
+		$the_target = waggle_get_the_target( $the_target_id );
+		return $the_target;
+	}
+	return false;
+}
+
+function waggle_get_the_target( $id ) {
+	$target_type = get_field( 'redirect_to', $id );
+
+	switch ( $target_type ) {
+		case 'external':
+			return get_field( 'external_target_path', $id );
+			break;
+		
+		case 'internal':
+			return get_field( 'internal_target_path', $id );
+			break;
+	}
+}
+
+function waggle_get_the_path() {
+	return ltrim( $_SERVER['REQUEST_URI'], '/' );
+}
 
 function waggle_save_title( $title ) {
 	if ( isset( $_POST['post_type'] ) && $_POST['post_type'] == 'redirect' ){
