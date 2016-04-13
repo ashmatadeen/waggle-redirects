@@ -12,7 +12,7 @@ function waggle_redirect_on_404() {
 	if ( is_404() ) {
 		$redirect_to = waggle_get_redirect_target();
 		if ( $redirect_to ) {
-			wp_redirect( $redirect_to );
+			wp_redirect( $redirect_to, 301 );
 			exit();
 		}
 	}
