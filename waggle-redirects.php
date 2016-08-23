@@ -27,7 +27,7 @@ function waggle_validate_external_url( $valid, $value, $field, $input ) {
 	return $valid;	
 }
 
-add_filter( 'acf/validate_value', 'waggle_validate_external_url', 10, 4 );
+//add_filter( 'acf/validate_value', 'waggle_validate_external_url', 10, 4 );
 
 function waggle_redirect_on_404() {
 	if ( is_404() ) {
