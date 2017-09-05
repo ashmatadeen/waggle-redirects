@@ -20,11 +20,11 @@ function waggle_validate_external_url( $valid, $value, $field, $input ) {
 	if( !$valid ) {
 		return $valid;
 	}
-	
+
 	var_dump( $value );
 	die( 'validating' );
 
-	return $valid;	
+	return $valid;
 }
 
 //add_filter( 'acf/validate_value', 'waggle_validate_external_url', 10, 4 );
@@ -66,7 +66,7 @@ function waggle_get_the_target( $id ) {
 		case 'external':
 			return get_field( 'external_target_path', $id );
 			break;
-		
+
 		case 'internal':
 			return get_field( 'internal_target_path', $id );
 			break;
@@ -78,8 +78,12 @@ function waggle_get_the_path() {
 }
 
 function waggle_save_title( $title ) {
-	if ( isset( $_POST['post_type'] ) && $_POST['post_type'] == 'redirect' ){
-		$title = $_POST['fields']['field_570e1a44d5123'];
+	if ( isset( $_POST['post_type'] ) && $_POST['post_type'] == 'redirect' ) {
+		if ( waggle_get_acf_version() <= 4 ) {
+			$title = $_POST['fields']['field_570e1a44d5123'];
+		} elseif ( waggle_get_acf_version() >= 5 ) {
+			$title = $_POST['acf']['field_570e1a44d5123'];
+		}
 	}
 	return $title;
 }
@@ -107,8 +111,8 @@ function waggle_register_redirect_cpt() {
 		'hierarchical' => false,
 		'rewrite' => false,
 		'query_var' => false,
-		'menu_icon' => 'dashicons-arrow-right-alt',		
-		'supports' => false,				
+		'menu_icon' => 'dashicons-arrow-right-alt',
+		'supports' => false,
 	);
 	register_post_type( 'redirect', $args );
 }
@@ -124,7 +128,7 @@ function waggle_register_fields() {
 	if ( ! function_exists( 'register_field_group' ) ) {
 		return false;
 	}
-	
+
 	register_field_group(array (
 		'id' => 'acf_waggle-redirects',
 		'title' => 'Waggle Redirects',
@@ -226,9 +230,9 @@ function waggle_register_fields() {
 	));
 }
 if ( waggle_get_acf_version() <= 4 ) {
-	add_action( 'acf/register_fields', 'waggle_register_fields' );	
+	add_action( 'acf/register_fields', 'waggle_register_fields' );
 } elseif ( waggle_get_acf_version() >= 5 ) {
-	add_action( 'acf/include_fields', 'waggle_register_fields' );	
+	add_action( 'acf/include_fields', 'waggle_register_fields' );
 }
 
 
@@ -251,5 +255,5 @@ function waggle_acf_settings_dir( $path = '' ) {
 }
 
 function waggle_remove_acf_from_admin_menu() {
-  remove_menu_page( 'edit.php?post_type=acf' ); 
+  remove_menu_page( 'edit.php?post_type=acf' );
 }
