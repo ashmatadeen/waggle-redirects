@@ -80,14 +80,29 @@ function waggle_get_the_path() {
 function waggle_save_title( $title ) {
 	if ( isset( $_POST['post_type'] ) && $_POST['post_type'] == 'redirect' ) {
 		if ( waggle_get_acf_version() <= 4 ) {
-			$title = $_POST['fields']['field_570e1a44d5123'];
+			$title = trim( $_POST['fields']['field_570e1a44d5123'], "/" );
 		} elseif ( waggle_get_acf_version() >= 5 ) {
-			$title = $_POST['acf']['field_570e1a44d5123'];
+			$title = trim( $_POST['acf']['field_570e1a44d5123'] , "/" );
 		}
 	}
 	return $title;
 }
 add_filter( 'title_save_pre', 'waggle_save_title' );
+
+function waggle_clean_source_path( $post_id ) {
+	// bail early if no ACF data
+	if( empty( $_POST['acf'] )  && empty( $_POST['fields'] ) ) {
+	  return;
+	}
+
+	if ( waggle_get_acf_version() <= 4 ) {
+		$_POST['fields']['field_570e1a44d5123'] = trim( $_POST['fields']['field_570e1a44d5123'], "/" );
+	} elseif ( waggle_get_acf_version() >= 5 ) {
+		$_POST['acf']['field_570e1a44d5123'] = trim( $_POST['acf']['field_570e1a44d5123'] , "/" );
+	}
+}
+
+add_action( 'acf/save_post', 'waggle_clean_source_path', 1 );
 
 function waggle_register_redirect_cpt() {
 	$labels = array(
