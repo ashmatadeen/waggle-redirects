@@ -27,6 +27,10 @@ function waggle_validate_external_url( $valid, $value, $field, $input ) {
 	return $valid;
 }
 
+function waggle_normalize_path( $path ) {
+	return strtolower( trim( $path, "/" ) );
+}
+
 //add_filter( 'acf/validate_value', 'waggle_validate_external_url', 10, 4 );
 
 function waggle_redirect_on_404() {
@@ -74,15 +78,15 @@ function waggle_get_the_target( $id ) {
 }
 
 function waggle_get_the_path() {
-	return ltrim( $_SERVER['REQUEST_URI'], '/' );
+	return waggle_normalize_path( $_SERVER['REQUEST_URI'] );
 }
 
 function waggle_save_title( $title ) {
 	if ( isset( $_POST['post_type'] ) && $_POST['post_type'] == 'redirect' ) {
 		if ( waggle_get_acf_version() <= 4 ) {
-			$title = trim( $_POST['fields']['field_570e1a44d5123'], "/" );
+			$title = waggle_normalize_path( $_POST['fields']['field_570e1a44d5123'] );
 		} elseif ( waggle_get_acf_version() >= 5 ) {
-			$title = trim( $_POST['acf']['field_570e1a44d5123'] , "/" );
+			$title = waggle_normalize_path( $_POST['acf']['field_570e1a44d5123'] );
 		}
 	}
 	return $title;
@@ -96,9 +100,9 @@ function waggle_clean_source_path( $post_id ) {
 	}
 
 	if ( waggle_get_acf_version() <= 4 ) {
-		$_POST['fields']['field_570e1a44d5123'] = trim( $_POST['fields']['field_570e1a44d5123'], "/" );
+		$_POST['fields']['field_570e1a44d5123'] = waggle_normalize_path( $_POST['fields']['field_570e1a44d5123'] );
 	} elseif ( waggle_get_acf_version() >= 5 ) {
-		$_POST['acf']['field_570e1a44d5123'] = trim( $_POST['acf']['field_570e1a44d5123'] , "/" );
+		$_POST['acf']['field_570e1a44d5123'] = waggle_normalize_path( $_POST['acf']['field_570e1a44d5123'] );
 	}
 }
 
