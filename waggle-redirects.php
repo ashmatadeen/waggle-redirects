@@ -5,7 +5,7 @@
  * Description: Set up and manage redirects
  * Author: Ash Matadeen
  * Author URI: http://ashmatadeen.com
- * Version: 1.0
+ * Version: 1.1
  */
 
 if( ! class_exists('acf') ) {
@@ -36,13 +36,25 @@ function waggle_normalize_path( $path ) {
 function waggle_redirect_on_404() {
 	if ( is_404() ) {
 		$redirect_to = waggle_get_redirect_target();
-		if ( $redirect_to ) {
+		if ( $redirect_to &&  waggle_source_path_has_php()) {
+			echo "<meta http-equiv=\"refresh\" content=\"0; url=$redirect_to\">";
+			die();
+		} elseif ($redirect_to) {
 			wp_redirect( $redirect_to, 301 );
 			exit();
 		}
 	}
 }
 add_action( 'template_redirect', 'waggle_redirect_on_404' );
+
+function waggle_source_path_has_php() {
+	$path = waggle_get_the_path();
+	if ( strpos( $path, '.php' ) !== false ) {
+		return TRUE;
+	} else {
+		return FALSE;
+	}
+}
 
 function waggle_get_redirect_target() {
 	$path = waggle_get_the_path();
